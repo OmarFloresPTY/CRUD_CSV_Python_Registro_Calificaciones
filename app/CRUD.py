@@ -4,7 +4,7 @@ import os
 def create_csv(path):
     if not os.path.exists(path):
         try:
-            os.makedirs('./CSV')
+            os.makedirs('./app/CSV')
             with open(path,mode='w',newline='')as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow(['CIP','Nombre','Apellido','P1','P2','P3','PF'])
@@ -20,7 +20,7 @@ def add_csv(path):
     try:
         with open(path,mode='a',newline='') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(['1-323-2130','Arelis','Reyes','100','100','100','100'])
+            writer.writerow(['6-722-2106','Omar','Flores','98','45','12','100'])
     except FileExistsError as ErrorFile:
         print(str(ErrorFile)+" == El archivo ya existe")
     except FileNotFoundError as ErrorFile2:
@@ -46,7 +46,8 @@ def read_csv(path):
         print(str(fnfe)+" <==> "+"No se encuentra el archivo .csv")
 
 if __name__ == "__main__":
-    path = './CSV/Notas_Universitarias.csv'
+    path = './app/CSV/Notas_Universitarias.csv'
     create_csv(path)
-    #data = read_csv(path)
-    #print(data)
+    add_csv(path)
+    data = read_csv(path)
+    print(data)
