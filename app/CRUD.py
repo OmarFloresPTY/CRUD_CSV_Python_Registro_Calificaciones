@@ -2,10 +2,9 @@ import csv
 import os
 
 def create_csv(path):
-    if os.path.exists(path):
-        print("El archivo ya existe!")
-    else:
+    if not os.path.exists(path):
         try:
+            os.makedirs('./CSV')
             with open(path,mode='w',newline='')as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow(['CIP','Nombre','Apellido','P1','P2','P3','PF'])
@@ -13,6 +12,9 @@ def create_csv(path):
             print(str(ErrorFile)+" == El archivo ya existe")
         except FileNotFoundError as ErrorFile2:
             print(str(ErrorFile2)+" == El archivo no se encuentra")
+    else:
+        print(f'El archivo ya existe! en: {path}')
+        
 
 def add_csv(path):
     try:
@@ -44,4 +46,7 @@ def read_csv(path):
         print(str(fnfe)+" <==> "+"No se encuentra el archivo .csv")
 
 if __name__ == "__main__":
-    data = read_csv('./CSV/Notas_Universitarias.csv')
+    path = './CSV/Notas_Universitarias.csv'
+    create_csv(path)
+    #data = read_csv(path)
+    #print(data)
