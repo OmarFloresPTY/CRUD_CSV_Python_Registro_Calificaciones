@@ -1,4 +1,5 @@
 import csv
+from functools import reduce
 from read_csv import read_csv
 #Es importante poner un try-cast evaluando que la llave no existe en el diccionario. Un keyerror!
 def modify_csv(path,key='Nombre',value='Omar'):
@@ -8,8 +9,10 @@ def modify_csv(path,key='Nombre',value='Omar'):
             dicc[key] = value
     labels = list(data[0].keys())
     data = list(map(lambda dicc:list(dicc.values()),data))
+    for lista in data:
+        prom = reduce(lambda a,b:int(a)+int(b),lista[3:6])//len(lista[3:6])
+        lista.append(prom) 
     data.insert(0,labels)
-    
     with open(path,"w",newline='') as csvfile:   
         writer = csv.writer(csvfile)
         for lista in data:
