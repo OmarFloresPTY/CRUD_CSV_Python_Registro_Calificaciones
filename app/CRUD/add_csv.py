@@ -4,7 +4,7 @@ def add_csv(path):
     try:
         with open(path,mode='a',newline='') as csvfile:
             writer = csv.writer(csvfile)
-            data = ['3-452-12','Maria','Barria',89,100,12]
+            data = ['7-889-788','Susan','Carrera',100,100,95]
             prom = reduce(lambda a,b:a+b,data[3:])//len(data[3:])
             data.append(prom)
             writer.writerow(data)

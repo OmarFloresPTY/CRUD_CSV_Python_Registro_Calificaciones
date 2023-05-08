@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import messagebox
-from CRUD.read_csv import read_csv_list
+from CRUD.read_csv import read_csv_list,read_csv_dict
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class RegistroPrincial:
     def __init__(self) -> None:
@@ -11,9 +12,11 @@ class RegistroPrincial:
         self.window.config(bg='white')
         self.label = tk.Label(self.window,text="Registro de Estudiantes",bg="white",font=("Arial",30,"bold"))
         self.label.pack()
-
+        #Creamos un contenedor que va a tener los labels, los textbox y el datagripview principal 
+        self.frame_padre = tk.Frame(self.window)
+        self.frame_padre.pack(pady=20)
         #Creando Texbox y labels principales
-        self.frame = tk.Frame(self.window,bg="white")
+        self.frame = tk.Frame(self.frame_padre,bg="white")
         self.frame.pack(pady=20)
         self.txt_cip = tk.Label(self.frame,text="CIP",bg="white")
         self.txt_cip.grid(row=1,column=0)
@@ -50,10 +53,16 @@ class RegistroPrincial:
         self.btn_refrescar = tk.Button(self.frame, text="Refrescar",width=10)
         self.btn_refrescar.grid(row=3,column=6,padx=(40,0))
         self.datagripviw_create()
+
+        #Crear gráfico:
+        value = read_csv_dict('./app/CSV/Notas_Universitarias.csv')
+        label = read_csv_list('./app/CSV/Notas_Universitarias.csv')
+        self.generate_data_asignature(label[0][3:],value)
         self.window.mainloop()
+       
 
     def datagripviw_create(self):
-        self.datagripview = ttk.Treeview(self.window,columns=("CIP","Nombre","Apellido","N1","N2","N3","PF"),show="headings")
+        self.datagripview = ttk.Treeview(self.frame_padre,columns=("CIP","Nombre","Apellido","N1","N2","N3","PF"),show="headings")
         self.datagripview.heading("CIP",text="CIP",anchor="center")
         self.datagripview.heading("Nombre",text="Nombre",anchor="center")
         self.datagripview.heading("Apellido",text="Apellido",anchor="center")
@@ -61,10 +70,42 @@ class RegistroPrincial:
         self.datagripview.heading("N2",text="N2",anchor="center")
         self.datagripview.heading("N3",text="N3",anchor="center")
         self.datagripview.heading("PF",text="PF",anchor="center")
+        #Ajustamos el tamaño de las columnas
+        self.datagripview.column("CIP",width=100)
+        self.datagripview.column("Nombre",width=100)
+        self.datagripview.column("Apellido",width=100)
+        self.datagripview.column("N1",width=100)
+        self.datagripview.column("N2",width=100)
+        self.datagripview.column("N3",width=100)
+        self.datagripview.column("PF",width=100)
         self.data = read_csv_list('./app/CSV/Notas_Universitarias.csv')
         for lista in self.data[1:]:
             self.datagripview.insert("","end",values=lista)
-        self.datagripview.pack()
+        self.datagripview.pack(padx=200)
+
+    def generate_data_asignature(self,label,data):
+        p1 = p2 = p3 = pf = 0
+        values = []
+        for dicc in data:
+            p1 += int(dicc.get('P1'))/len(data)
+            p2 += int(dicc.get('P2'))/len(data)
+            p3 += int(dicc.get('P3'))/len(data)
+            pf += int(dicc.get('PF'))/len(data)
+        values.append(p1)
+        values.append(p2)
+        values.append(p3)
+        values.append(pf)
+
+        fig, ax = plt.subplots()
+        ax.bar(label,values)
+        ax.set_xlabel('Notas y Promedios de la Clase')
+        ax.set_ylabel('Calificación Promedio')
+        ax.set_title("Gráfico Calificación Promedio del Curso Por Notas")
+        canvas = FigureCanvasTkAgg(fig,master=self.window)
+        canvas.draw()
+        canvas.get_tk_widget().pack()
+        plt.close()
+
 
 
 if __name__ == '__main__':
