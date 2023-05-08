@@ -1,3 +1,2 @@
-import CRUD.add_csv,CRUD.create_csv,CRUD.read_csv
-#Se puede inicializar el crear el csv, se puede preguntar si existe y si no, se crea.
-CRUD.create('./app/CSV/Notas_Universitarias.csv')
+import CRUD.create_csv
+CRUD.create_csv.create_csv('./app/CSV/Notas_Universitarias.csv')

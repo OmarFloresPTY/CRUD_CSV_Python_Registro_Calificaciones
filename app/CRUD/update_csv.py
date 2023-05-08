@@ -19,5 +19,5 @@ def modify_csv(path,key='Nombre',value='Omar'):
             writer.writerow(lista)
 
 if __name__ == '__main__':
-    path = './app/CSV/Notas_Universitarias.csv'
+    path = './CSV/Notas_Universitarias.csv'
     modify_csv(path)
