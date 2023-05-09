@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from CRUD.read_csv import read_csv_list,read_csv_dict
+from CRUD.add_csv import add_csv
+from CRUD.deleter_csv import deleter_element_csv
+from CRUD.update_csv import modify_csv
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -44,20 +47,20 @@ class RegistroPrincial:
         self.txtbox_p3.grid(row=2,column=5)
 
         #Botones CRUD
-        self.btn_agregar = tk.Button(self.frame, text="Agregar",width=10)
+        self.btn_agregar = tk.Button(self.frame, text="Agregar",width=10,command=lambda: add_csv('./app/CSV/Notas_Universitarias.csv',self.txtbox_cip.get(),self.txtbox_nombre.get(),self.txtbox_apellido.get(),int(self.txtbox_p1.get()),int(self.txtbox_p2.get()),int(self.txtbox_p3.get())))
         self.btn_agregar.grid(row=0,column=6,padx=(40,0))
-        self.btn_modificar = tk.Button(self.frame, text="Modificar",width=10)
+        self.btn_modificar = tk.Button(self.frame, text="Modificar",width=10,command=lambda:modify_csv('./app/CSV/Notas_Universitarias.csv',self.txtbox_cip.get(),self.txtbox_nombre.get(),self.txtbox_apellido.get(),self.txtbox_p1.get(),self.txtbox_p2.get(),self.txtbox_p3.get()))
         self.btn_modificar.grid(row=1,column=6,padx=(40,0))
-        self.btn_eliminar = tk.Button(self.frame, text="Eliminar",width=10)
+        self.btn_eliminar = tk.Button(self.frame, text="Eliminar",width=10,command=lambda:deleter_element_csv('./app/CSV/Notas_Universitarias.csv',self.txtbox_cip.get()))
         self.btn_eliminar.grid(row=2,column=6,padx=(40,0))
-        self.btn_refrescar = tk.Button(self.frame, text="Refrescar",width=10)
+        self.btn_refrescar = tk.Button(self.frame, text="Refrescar",width=10,command=self.datanew)
         self.btn_refrescar.grid(row=3,column=6,padx=(40,0))
         self.datagripviw_create()
 
         #Crear gráfico:
-        value = read_csv_dict('./app/CSV/Notas_Universitarias.csv')
-        label = read_csv_list('./app/CSV/Notas_Universitarias.csv')
-        self.generate_data_asignature(label[0][3:],value)
+        value_x = read_csv_dict('./app/CSV/Notas_Universitarias.csv')
+        value_y = read_csv_list('./app/CSV/Notas_Universitarias.csv')
+        self.generate_data_asignature(value_y[0][3:],value_x)
         self.window.mainloop()
        
 
@@ -82,6 +85,16 @@ class RegistroPrincial:
         for lista in self.data[1:]:
             self.datagripview.insert("","end",values=lista)
         self.datagripview.pack(padx=200)
+        self.datagripview.bind("<ButtonRelease-1>",self.update_textbox_datagripview_onclic)
+    
+    def datanew(self):
+        if self.datagripview:
+            self.datagripview.destroy()
+            self.datagripviw_create()
+            self.canvas.get_tk_widget().destroy()
+            value_x = read_csv_dict('./app/CSV/Notas_Universitarias.csv')
+            value_y = read_csv_list('./app/CSV/Notas_Universitarias.csv')
+            self.generate_data_asignature(value_y[0][3:],value_x)
 
     def generate_data_asignature(self,label,data):
         p1 = p2 = p3 = pf = 0
@@ -101,12 +114,26 @@ class RegistroPrincial:
         ax.set_xlabel('Notas y Promedios de la Clase')
         ax.set_ylabel('Calificación Promedio')
         ax.set_title("Gráfico Calificación Promedio del Curso Por Notas")
-        canvas = FigureCanvasTkAgg(fig,master=self.window)
-        canvas.draw()
-        canvas.get_tk_widget().pack()
+        self.canvas = FigureCanvasTkAgg(fig,master=self.window)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack()
         plt.close()
-
-
+    
+    def update_textbox_datagripview_onclic(self,event):
+        item = self.datagripview.selection()[0]
+        values = self.datagripview.item(item)["values"]
+        self.txtbox_cip.delete(0,tk.END)
+        self.txtbox_cip.insert(0,values[0])
+        self.txtbox_nombre.delete(0,tk.END)
+        self.txtbox_nombre.insert(1,values[1])
+        self.txtbox_apellido.delete(0,tk.END)
+        self.txtbox_apellido.insert(2,values[2])
+        self.txtbox_p1.delete(0,tk.END)
+        self.txtbox_p1.insert(3,values[3])
+        self.txtbox_p2.delete(0,tk.END)
+        self.txtbox_p2.insert(4,values[4])
+        self.txtbox_p3.delete(0,tk.END)
+        self.txtbox_p3.insert(5,values[5])
 
 if __name__ == '__main__':
     ventana = RegistroPrincial()
