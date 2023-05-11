@@ -1,6 +1,6 @@
 import csv
 import os
-#ARREGLAR EL ERROR DE CREAR, COMO SON DIRECTORIOS HERMANOS ES DIFICIL ACCEDER A ELLOS
+
 def create_csv(path):
     if not os.path.exists(path):
         try:
